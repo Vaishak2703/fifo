@@ -1,0 +1,56 @@
+#include <stdint.h> 
+#define FIFO_SIZE 10 // Adjust the size as needed 
+// Structure to represent the FIFO buffer 
+typedef struct { uint8_t 
+data[FIFO_SIZE]; 
+ uint8_t head; 
+uint8_t tail; 
+} 
+FifoBuffer; 
+// Initialize the FIFO buffer void 
+fifo_init(FifoBuffer *fifo) { 
+fifo->head = 0; fifo->tail = 0; 
+} 
+// Check if the FIFO is empty int 
+fifo_is_empty(const FifoBuffer *fifo) { 
+return (fifo->head == fifo->tail); 
+} 
+// Check if the FIFO is full int fifo_is_full(const 
+FifoBuffer *fifo) { return ((fifo->tail + 1) % 
+FIFO_SIZE == fifo->head); 
+} 
+// Add data to the FIFO int fifo_push(FifoBuffer 
+*fifo, uint8_t value) { if (fifo_is_full(fifo)) { 
+ // FIFO is full, data cannot be added 
+ return -1; 
+ } 
+ fifo->data[fifo->tail] = value; 
+ fifo->tail = (fifo->tail + 1) % FIFO_SIZE; 
+ return 0; // Success 
+} 
+// Remove data from the FIFO int 
+fifo_pop(FifoBuffer *fifo, uint8_t *value) { 
+if (fifo_is_empty(fifo)) { // FIFO is empty, 
+no data to remove 
+ return -1; 
+ } 
+ *value = fifo->data[fifo->head]; fifo->head 
+= (fifo->head + 1) % FIFO_SIZE; 
+ return 0; // Success 
+} 
+int main() { 
+FifoBuffer myFifo; 
+uint8_t data; 
+fifo_init(&myFifo); 
+ // Add data to the FIFO for 
+(uint8_t i = 0; i < 10; i++) { 
+ fifo_push(&myFifo, i); 
+ } 
+ // Remove and print data from the FIFO 
+while (!fifo_is_empty(&myFifo)) { 
+fifo_pop(&myFifo, &data); // Process 
+the data as needed 
+ // For example, print it to a serial port 
+ } 
+ return 0; 
+}
